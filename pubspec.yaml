@@ -23,6 +23,7 @@ dependencies:
   fluttertoast: any
   shared_preferences: any
   intl: any
+  flutter_dotenv: any
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +33,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env

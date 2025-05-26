@@ -38,7 +38,7 @@ class ProfileViewController extends StateNotifier<ProfileState> {
 
     try {
       final accessToken = await _getAccessToken();
-      final customer = await AuthRepository.fetchCustomer(accessToken,);
+      final customer = await repository.fetchCustomer(accessToken,);
       state = state.copyWith(isLoading: false, customer: customer, error: null);
     } catch (e) {
       state = state.copyWith(

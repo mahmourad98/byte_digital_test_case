@@ -20,10 +20,12 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late final _formKey = GlobalKey<FormBuilderState>();
+  late final _hidePassword = ValueNotifier<bool>(true);
   late final _emailController = TextEditingController();
   late final _passwordController = TextEditingController();
 
   @override void dispose() {
+    _hidePassword.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -59,16 +61,33 @@ class _LoginScreenState extends State<LoginScreen> {
                     FormBuilderValidators.email(),
                   ]),
                 ),
-                FormBuilderTextField(
-                  name: 'password',
-                  controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.password(),
-                    FormBuilderValidators.minLength(8, errorText: 'Password must be at least 8 characters long'),
-                  ]),
+                ValueListenableBuilder<bool>(
+                  valueListenable: _hidePassword,
+                  builder: (_, showPassword, __) {
+                    return FormBuilderTextField(
+                      name: 'password',
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: Builder(
+                          builder: (_) {
+                            return IconButton(
+                              icon: Icon(
+                                showPassword ? Icons.visibility : Icons.visibility_off,
+                              ),
+                              onPressed: () => _hidePassword.value = !_hidePassword.value,
+                            );
+                          },
+                        ),
+                      ),
+                      obscureText: _hidePassword.value,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.password(),
+                        FormBuilderValidators.minLength(8, errorText: 'Password must be at least 8 characters long'),
+                      ]),
+                    );
+                  },
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
@@ -78,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       FocusScope.of(context).unfocus();
                       return unawaited(
                         showLoadingDialog<String>(
-                          future: () => AuthRepository.loginCustomer(
+                          future: () => AuthRepository().loginCustomer(
                             _emailController.text,
                             _passwordController.text,
                           ),

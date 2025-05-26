@@ -3,16 +3,12 @@ import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
 
-import 'package:byte_digital_test_case/utils/data/node.dart';
+import 'package:byte_digital_test_case/utils/data/repository_helper.dart';
 import 'package:http/http.dart' as http;
 
 import '../entities/product.dart';
 
-class ProductRepository {
-  static const String _storefrontAccessToken = '588cbc282ac14029ba9be06b811e8fcc';
-
-  static String get _baseUrl => 'https://mahmourad.myshopify.com/api/2025-04/graphql.json';
-
+class ProductRepository with RepositoryHelper {
   static const String FETCH_PRODUCT_MUTATION = '''
     query getProducts(\$first: Int!) {
       products(first: \$first) {
@@ -49,10 +45,10 @@ class ProductRepository {
 
   Future<List<Product>> fetchProducts({int count = 10}) async {
     final response = await http.post(
-      Uri.parse(_baseUrl),
+      Uri.parse(baseUrl),
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': _storefrontAccessToken,
+        'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
       },
       body: json.encode({
         'query': FETCH_PRODUCT_MUTATION,

@@ -1,5 +1,3 @@
-import 'package:byte_digital_test_case/utils/data/node.dart';
-
 // Product model
 class Product {
   final String id;
@@ -27,5 +25,14 @@ class Product {
       price: json['priceRange']?['minVariantPrice']?['amount'] ?? '0.00',
       currencyCode: json['priceRange']?['minVariantPrice']?['currencyCode'] ?? 'TRY',
     );
+  }
+}
+
+class Node<T> {
+  T value;
+  Node(this.value);
+
+  factory Node.fromJson(Map<String, dynamic> json, T Function(Map<String, dynamic>) converter,) {
+    return Node<T>(converter(Map.of(json['node']).cast<String, dynamic>()));
   }
 }

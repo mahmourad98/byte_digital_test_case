@@ -18,7 +18,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   late final _formKey = GlobalKey<FormBuilderState>();
-
+  late final _hidePassword = ValueNotifier<bool>(true);
   late final _firstNameController = TextEditingController();
   late final _lastNameController = TextEditingController();
   late final _emailController = TextEditingController();
@@ -26,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late final _passwordController = TextEditingController();
 
   @override void dispose() {
+    _hidePassword.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
@@ -92,15 +93,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     FormBuilderValidators.minLength(8, errorText: 'Password must be at least 8 characters long'),
                   ]),
                 ),
-                FormBuilderTextField(
-                  name: 'password',
-                  decoration: InputDecoration(labelText: 'Password'),
-                  controller: _passwordController,
-                  obscureText: true,
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.password(minLength: 8,),
-                  ]),
+                ValueListenableBuilder<bool>(
+                  valueListenable: _hidePassword,
+                  builder: (_, showPassword, __) {
+                    return FormBuilderTextField(
+                      name: 'password',
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: Builder(
+                          builder: (_) {
+                            return IconButton(
+                              icon: Icon(
+                                showPassword ? Icons.visibility : Icons.visibility_off,
+                              ),
+                              onPressed: () => _hidePassword.value = !_hidePassword.value,
+                            );
+                          },
+                        ),
+                      ),
+                      controller: _passwordController,
+                      obscureText: showPassword,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.password(minLength: 8,),
+                      ]),
+                    );
+                  },
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
@@ -109,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (_formKey.currentState!.validate()) {
                       return unawaited(
                         showLoadingDialog(
-                          future: () => AuthRepository.registerCustomer(
+                          future: () => AuthRepository().registerCustomer(
                             Customer(
                               firstName: _firstNameController.text,
                               lastName: _lastNameController.text,

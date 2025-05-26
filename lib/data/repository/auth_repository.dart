@@ -2,14 +2,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:developer' as dev;
+import 'package:byte_digital_test_case/utils/data/repository_helper.dart';
 import 'package:http/http.dart' as http;
 import '../entities/customer.dart';
 
-class AuthRepository {
-  static const String _storefrontAccessToken = '588cbc282ac14029ba9be06b811e8fcc';
-
-  static String get _baseUrl => 'https://mahmourad.myshopify.com/api/2025-04/graphql.json';
-
+class AuthRepository with RepositoryHelper {
   static const String CUSTOMER_REGISTER_MUTATION = '''
     mutation customerCreate(\$input: CustomerCreateInput!) {
       customerCreate(input: \$input) {
@@ -52,13 +49,13 @@ class AuthRepository {
     }
   ''';
 
-  static Future<String> loginCustomer(String email, String password,) async{
+  Future<String> loginCustomer(String email, String password,) async{
     try {
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(baseUrl),
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': _storefrontAccessToken,
+          'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
         },
         body: json.encode({
           'query': CUSTOMER_LOGIN_MUTATION,
@@ -91,13 +88,13 @@ class AuthRepository {
     }
   }
 
-  static Future<Customer> registerCustomer(Customer input, String password) async{
+  Future<Customer> registerCustomer(Customer input, String password) async{
     try {
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(baseUrl),
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': _storefrontAccessToken,
+          'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
         },
         body: json.encode({
           'query': CUSTOMER_REGISTER_MUTATION,
@@ -131,13 +128,13 @@ class AuthRepository {
     }
   }
 
-  static Future<Customer> fetchCustomer(String accessToken,) async{
+  Future<Customer> fetchCustomer(String accessToken,) async{
     try {
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(baseUrl),
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': _storefrontAccessToken,
+          'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
         },
         body: json.encode({
           'query': CUSTOMER_DATA_MUTATION,
