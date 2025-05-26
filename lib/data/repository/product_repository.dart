@@ -1,16 +1,19 @@
+// ignore_for_file: constant_identifier_names
 import 'dart:convert';
+import 'dart:developer' as dev;
+import 'dart:io';
 
+import 'package:byte_digital_test_case/utils/node.dart';
 import 'package:http/http.dart' as http;
+
 import '../entities/product.dart';
 
-class ShopifyService {
-  static const String _storeName = 'mahmourad';
-  static const String _storefrontAccessToken = 'YOUR_STOREFRONT_ACCESS_TOKEN';
-  static const String _apiVersion = '2023-10';
+class ProductRepository {
+  static const String _storefrontAccessToken = '588cbc282ac14029ba9be06b811e8fcc';
 
-  static String get _baseUrl => 'https://$_storeName.myshopify.com/api/$_apiVersion/graphql.json';
+  static String get _baseUrl => 'https://mahmourad.myshopify.com/api/2025-04/graphql.json';
 
-  static const String _productsQuery = '''
+  static const String FETCH_PRODUCT_MUTATION = '''
     query getProducts(\$first: Int!) {
       products(first: \$first) {
         edges {
@@ -44,7 +47,7 @@ class ShopifyService {
     }
   ''';
 
-  static Future<List<Product>> fetchProducts({int count = 10}) async {
+  Future<List<Product>> fetchProducts({int count = 10}) async {
     final response = await http.post(
       Uri.parse(_baseUrl),
       headers: {
@@ -52,17 +55,24 @@ class ShopifyService {
         'X-Shopify-Storefront-Access-Token': _storefrontAccessToken,
       },
       body: json.encode({
-        'query': _productsQuery,
+        'query': FETCH_PRODUCT_MUTATION,
         'variables': {
           'first': count
         },
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok && response.body.isNotEmpty) {
       final data = Map.of(json.decode(response.body)).cast<String, dynamic>();
-      final products = List.of(data['data']['products']['edges']).cast<Map<String, dynamic>>();
-      return products.map((edge) => Product.fromJson(edge['node'])).toList();
+
+      if (data['errors'] != null) {
+        throw Exception('GraphQL Error: ${data['errors']}');
+      }
+
+      dev.log('product fetching success.', name: "Product Repo - fetchProducts()",);
+      final nodes = List.of(data['data']['products']['edges']);
+      final products = nodes.map((e) => Node<Product>.fromJson(e, (node) => Product.fromJson(node)).value).toList();
+      return products;
     } else {
       throw Exception('Failed to load products: ${response.statusCode}');
     }

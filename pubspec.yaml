@@ -16,6 +16,8 @@ dependencies:
   material_design_icons_flutter: any
   cupertino_icons: any
   http: any
+  provider: any
+  flutter_riverpod: any
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,7 @@
 import 'package:byte_digital_test_case/data/repository/auth_repository.dart';
 import 'package:byte_digital_test_case/main_app.dart';
 import 'package:flutter/material.dart';
-import 'product_listing_screen.dart';
+import 'product_listing/product_listing_screen.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     emailController.text,
                     passwordController.text,
                   ).then((_) {
-                    navigatorKey.currentState!.push(
+                    navigatorKey.currentState!.pushReplacement(
                       MaterialPageRoute(builder: (_,) => ProductListingScreen(),),
                     );
                   });

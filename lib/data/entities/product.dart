@@ -1,36 +1,31 @@
-import 'dart:convert';
+import 'package:byte_digital_test_case/utils/node.dart';
 
 // Product model
 class Product {
   final String id;
   final String title;
   final String description;
-  final List<String> imageUrl;
+  final List<String> imageUrls;
   final String price;
-  final String compareAtPrice;
+  final String currencyCode;
 
   Product({
     required this.id,
     required this.title,
     required this.description,
-    required this.imageUrl,
+    required this.imageUrls,
     required this.price,
-    required this.compareAtPrice,
+    required this.currencyCode,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    final priceRange = json['priceRange']['minVariantPrice'];
-    final compareAtPriceRange = json['compareAtPriceRange']['minVariantPrice'];
-
     return Product(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'] ?? '',
-      imageUrl: json['images']?['edges'] != null ? List.of(json['images']['edges']).map((e) => (e as Map)['node']['url'] as String).toList() : [],
-      price: '${priceRange['currencyCode']} ${priceRange['amount']}',
-      compareAtPrice: compareAtPriceRange != null
-          ? '${compareAtPriceRange['currencyCode']} ${compareAtPriceRange['amount']}'
-          : '',
+      id: json['id'] ?? "N/A",
+      title: json['title'] ?? "N/A",
+      description: json['description'] ?? "N/A",
+      imageUrls: json['images']?['edges'] != null ? List.of(json['images']['edges']).map((e) => Node<String>.fromJson(e, (node) => node['originalSrc']).value).toList() : [],
+      price: json['priceRange']?['minVariantPrice']?['amount'] ?? '0.00',
+      currencyCode: json['priceRange']?['minVariantPrice']?['currencyCode'] ?? 'TRY',
     );
   }
 }

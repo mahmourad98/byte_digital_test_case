@@ -91,7 +91,7 @@ class AuthRepository {
       );
 
       if (response.statusCode == HttpStatus.ok && response.body.isNotEmpty) {
-        final data = json.decode(response.body);
+        final data = Map.of(json.decode(response.body)).cast<String, dynamic>();
 
         if (data['errors'] != null) {
           throw Exception('GraphQL Error: ${data['errors']}');
