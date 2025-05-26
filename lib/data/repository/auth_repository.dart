@@ -47,6 +47,7 @@ class AuthRepository {
         acceptsMarketing
         email
         phone
+        createdAt
       }
     }
   ''';

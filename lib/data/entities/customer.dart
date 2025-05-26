@@ -3,6 +3,7 @@ class Customer {
   final String lastName;
   final String email;
   final String phone;
+  final String? createdAt;
   final bool acceptsMarketing;
 
   Customer({
@@ -10,6 +11,7 @@ class Customer {
     required this.lastName,
     required this.email,
     required this.phone,
+    this.createdAt,
     this.acceptsMarketing = true,
   });
 
@@ -19,6 +21,7 @@ class Customer {
       lastName: json['lastName'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
+      createdAt: json['createdAt'],
       acceptsMarketing: json['acceptsMarketing'] ?? false,
     );
   }
@@ -29,6 +32,7 @@ class Customer {
       'lastName': lastName,
       'email': email,
       'phone': phone,
+      'createdAt': createdAt,
       'acceptsMarketing': acceptsMarketing,
     };
   }

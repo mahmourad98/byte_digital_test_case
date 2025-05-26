@@ -5,9 +5,9 @@ import 'product_listing_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../widgets/product_card.dart';
-import '../user_account_screen.dart';
+import '../profile/profile_screen.dart';
 
-final productViewControllerProvider = StateNotifierProvider<ProductViewController, ProductState>((ref) {
+final productViewControllerProvider = StateNotifierProvider<ProductViewController, ProductListingState>((ref) {
   final repository = ProductRepository();
   return ProductViewController(repository);
 });

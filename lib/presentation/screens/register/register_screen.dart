@@ -59,13 +59,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   name: 'firstName',
                   decoration: InputDecoration(labelText: 'First Name'),
                   controller: _firstNameController,
-                  validator: FormBuilderValidators.required(),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.alphabetical(),
+                  ]),
                 ),
                 FormBuilderTextField(
                   name: 'lastName',
                   decoration: InputDecoration(labelText: 'Last Name'),
                   controller: _lastNameController,
-                  validator: FormBuilderValidators.required(),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.alphabetical(),
+                  ]),
                 ),
                 FormBuilderTextField(
                   name: 'email',
@@ -83,6 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(),
                     FormBuilderValidators.phoneNumber(),
+                    FormBuilderValidators.minLength(8, errorText: 'Password must be at least 8 characters long'),
                   ]),
                 ),
                 FormBuilderTextField(

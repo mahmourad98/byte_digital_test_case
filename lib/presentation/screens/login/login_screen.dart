@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:byte_digital_test_case/data/repository/auth_repository.dart';
 import 'package:byte_digital_test_case/main_app.dart';
 import 'package:byte_digital_test_case/presentation/screens/register/register_screen.dart';
+import 'package:byte_digital_test_case/services/shared_prefs_service.dart';
 import 'package:byte_digital_test_case/utils/presentation/toast_helper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(),
-                    FormBuilderValidators.password(minLength: 8,),
+                    FormBuilderValidators.password(),
+                    FormBuilderValidators.minLength(8, errorText: 'Password must be at least 8 characters long'),
                   ]),
                 ),
                 SizedBox(height: 20),
@@ -78,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           _emailController.text,
                           _passwordController.text,
                         ).then((String token) {
-                          return AuthRepository.fetchCustomer(token).then((_) {
+                          return SharedPrefsService.saveToken(token).then((_) {
                             navigatorKey.currentState!.pushReplacement(
                               MaterialPageRoute(builder: (_,) => ProductListingScreen(),),
                             );

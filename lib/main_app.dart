@@ -1,3 +1,4 @@
+import 'package:byte_digital_test_case/presentation/screens/product_listing/product_listing_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'presentation/screens/login/login_screen.dart';
@@ -5,7 +6,8 @@ import 'presentation/screens/login/login_screen.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key,});
+  final bool isLoggedIn;
+  const MainApp({super.key, this.isLoggedIn = false});
 
   @override Widget build(BuildContext context,) {
     return MaterialApp(
@@ -17,7 +19,7 @@ class MainApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: isLoggedIn ? ProductListingScreen() : const LoginScreen(),
     );
   }
 }
