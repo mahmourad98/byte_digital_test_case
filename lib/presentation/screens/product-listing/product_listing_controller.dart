@@ -37,7 +37,7 @@ class ProductViewController extends StateNotifier<ProductListingState> {
 
     try {
       final products = await repository.fetchProducts();
-      state = state.copyWith(isLoading: false, products: products, error: null);
+      state = state.copyWith(isLoading: false, products: products..shuffle(), error: null);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,

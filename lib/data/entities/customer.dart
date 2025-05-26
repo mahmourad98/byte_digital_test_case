@@ -32,7 +32,7 @@ class Customer {
       'lastName': lastName,
       'email': email,
       'phone': phone,
-      'createdAt': createdAt,
+      if(createdAt != null) 'createdAt': createdAt,
       'acceptsMarketing': acceptsMarketing,
     };
   }

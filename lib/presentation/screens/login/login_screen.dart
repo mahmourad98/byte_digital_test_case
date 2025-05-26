@@ -4,13 +4,14 @@ import 'package:byte_digital_test_case/data/repository/auth_repository.dart';
 import 'package:byte_digital_test_case/main_app.dart';
 import 'package:byte_digital_test_case/presentation/screens/register/register_screen.dart';
 import 'package:byte_digital_test_case/services/shared_prefs_service.dart';
+import 'package:byte_digital_test_case/utils/presentation/dialog_helper.dart';
 import 'package:byte_digital_test_case/utils/presentation/toast_helper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
-import '../product_listing/product_listing_screen.dart';
+import '../product-listing/product_listing_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key,});
@@ -76,11 +77,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (_formKey.currentState!.validate()) {
                       FocusScope.of(context).unfocus();
                       return unawaited(
-                        AuthRepository.loginCustomer(
-                          _emailController.text,
-                          _passwordController.text,
+                        showLoadingDialog<String>(
+                          future: () => AuthRepository.loginCustomer(
+                            _emailController.text,
+                            _passwordController.text,
+                          ),
+                          dialogBuilder: (_,) => AlertDialog(
+                            content: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(width: 20),
+                                Text('Logging in...'),
+                              ],
+                            ),
+                          ),
                         ).then((String token) {
                           return SharedPrefsService.saveToken(token).then((_) {
+                            ToastHelper.showSuccessToast('Logged in successfully!');
                             navigatorKey.currentState!.pushReplacement(
                               MaterialPageRoute(builder: (_,) => ProductListingScreen(),),
                             );

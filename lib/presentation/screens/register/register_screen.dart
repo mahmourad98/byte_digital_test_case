@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:byte_digital_test_case/data/entities/customer.dart';
 import 'package:byte_digital_test_case/data/repository/auth_repository.dart';
 import 'package:byte_digital_test_case/main_app.dart';
-import 'package:byte_digital_test_case/presentation/screens/product_listing/product_listing_screen.dart';
+import 'package:byte_digital_test_case/utils/presentation/dialog_helper.dart';
 import 'package:byte_digital_test_case/utils/presentation/toast_helper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -107,24 +107,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     _formKey.currentState!.save();
                     if (_formKey.currentState!.validate()) {
-                      AuthRepository.registerCustomer(
-                        Customer(
-                          firstName: _firstNameController.text,
-                          lastName: _lastNameController.text,
-                          email: _emailController.text,
-                          phone: _phoneNumberController.text,
-                        ),
-                        _passwordController.text,
-                      ).then((_) {
-                        ToastHelper.showSuccessToast('Registration successful!, please login.');
-                        unawaited(
-                          navigatorKey.currentState!.pushReplacement(
-                            MaterialPageRoute(builder: (_,) => ProductListingScreen(),),
+                      return unawaited(
+                        showLoadingDialog(
+                          future: () => AuthRepository.registerCustomer(
+                            Customer(
+                              firstName: _firstNameController.text,
+                              lastName: _lastNameController.text,
+                              email: _emailController.text,
+                              phone: _phoneNumberController.text,
+                            ),
+                            _passwordController.text,
                           ),
-                        );
-                      }).onError((error, stackTrace) {
-                        ToastHelper.showErrorToast(error.toString());
-                      });
+                          dialogBuilder: (_,) => AlertDialog(
+                            content: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(width: 20),
+                                Text('Registering...'),
+                              ],
+                            ),
+                          ),
+                        ).then((Customer customer) {
+                          ToastHelper.showSuccessToast('Registration successful!, please login.');
+                          navigatorKey.currentState!.pop();
+                        }).onError((error, stackTrace) {
+                          ToastHelper.showErrorToast(error.toString());
+                        }),
+                      );
                     } else {
                       // Handle validation errors
                       _formKey.currentState?.validate();

@@ -73,18 +73,23 @@ class _ProductListingScreenState extends ConsumerState<ProductListingScreen> {
               ),
             );
           } else {
-            return ListView.builder(
-              itemCount: state.products.length,
-              itemBuilder: (context, index) {
-                final product = state.products.elementAt(index);
-                return ProductCard(
-                  title: product.title,
-                  description: product.description,
-                  price: product.price,
-                  currencyCode: product.currencyCode,
-                  imageUrls: product.imageUrls,
-                );
+            return RefreshIndicator(
+              onRefresh: () async {
+                await ref.read(productViewControllerProvider.notifier).fetchProducts();
               },
+              child: ListView.builder(
+                itemCount: state.products.length,
+                itemBuilder: (context, index) {
+                  final product = state.products.elementAt(index);
+                  return ProductCard(
+                    title: product.title,
+                    description: product.description,
+                    price: product.price,
+                    currencyCode: product.currencyCode,
+                    imageUrls: product.imageUrls,
+                  );
+                },
+              ),
             );
           }
         },

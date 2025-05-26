@@ -5,6 +5,8 @@ import 'package:byte_digital_test_case/main_app.dart';
 import 'package:byte_digital_test_case/presentation/screens/login/login_screen.dart';
 import 'package:byte_digital_test_case/presentation/widgets/user_info_item.dart';
 import 'package:byte_digital_test_case/services/shared_prefs_service.dart';
+import 'package:byte_digital_test_case/utils/presentation/dialog_helper.dart';
+import 'package:byte_digital_test_case/utils/presentation/toast_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -85,6 +87,10 @@ class _UserAccountScreenState extends ConsumerState<UserAccountScreen> {
                   value: state.customer!.email
                 ),
                 UserInfoItem(
+                    label: 'Phone Number',
+                    value: state.customer!.phone
+                ),
+                UserInfoItem(
                   label: 'Registration Date',
                   value: dateFormatted,
                 ),
@@ -95,12 +101,28 @@ class _UserAccountScreenState extends ConsumerState<UserAccountScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        return unawaited(SharedPrefsService.clearToken().then((_) {
-                          navigatorKey.currentState!.pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_,) => LoginScreen(),),
-                            (Route route) => false,
-                          );
-                        }));
+                        return unawaited(
+                          showLoadingDialog(
+                            future: () => Future.delayed(Duration(seconds: 1,), () => SharedPrefsService.clearToken()),
+                            dialogBuilder: (_,) => AlertDialog(
+                              content: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircularProgressIndicator(),
+                                  SizedBox(width: 20),
+                                  Text('Logging out...'),
+                                ],
+                              ),
+                            ),
+                          ).then((_) {
+                            ToastHelper.showSuccessToast('Logged out successfully!');
+                            navigatorKey.currentState!.pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_,) => LoginScreen(),), (Route route) => false,
+                            );
+                          }).onError((error, stackTrace) {
+                            return ToastHelper.showErrorToast(error.toString());
+                          }),
+                        );
                       },
                       child: Text(
                         'Logout',
