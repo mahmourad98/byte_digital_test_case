@@ -10,7 +10,7 @@ class Customer {
     required this.lastName,
     required this.email,
     required this.phone,
-    required this.acceptsMarketing,
+    this.acceptsMarketing = true,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) {

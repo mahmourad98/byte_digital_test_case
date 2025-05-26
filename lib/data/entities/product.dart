@@ -1,4 +1,4 @@
-import 'package:byte_digital_test_case/utils/node.dart';
+import 'package:byte_digital_test_case/utils/data/node.dart';
 
 // Product model
 class Product {

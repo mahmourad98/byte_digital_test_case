@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
 
-import 'package:byte_digital_test_case/utils/node.dart';
+import 'package:byte_digital_test_case/utils/data/node.dart';
 import 'package:http/http.dart' as http;
 
 import '../entities/product.dart';
